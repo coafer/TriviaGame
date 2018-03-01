@@ -16,12 +16,16 @@
           <h1 class="display-4 text-center">Trivia!</h1>
           <p class="lead text-center p-2">Try to answer these questions before the times end.</p>
           <p class="text-center">The questions will be about different themes so be prepared to use your knowledge and general culture.</p>
+            <div id="quest_cont" class="d-flex flex-column p-2 ">
+                <!--  Insert Data here  -->
+                
+            </div>    
           <p class="lead d-flex justify-content-center p-2 ">
             <a class="btn btn-primary btn-lg" href="#" role="button">Let's Play</a>
           </p>
         </div> 
     </div   >
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
         
         //Set global variables for correct, unanswered and incorrect answers 
@@ -29,39 +33,44 @@
         var questionsRight = 0;
         var questionsWrong = 0;
         var questionsNotAnswered = 0;
-        var data = "https://opentdb.com/api.php?amount=10";
         var userChoice;
         var correct_answer;
         
-        //Set function to start playing
         
+        
+        //Accessing the API from opentdb.com
+        (function(){
+            var data = "https://opentdb.com/api.php?amount=10";
+            $.ajax({
+              url: data,
+              method: 'GET'
+            }).then(function(obj){
+                console.log(obj.results);
+                for (i =0 ; i < 10 ; i++){
+                    if (obj.results[i].type == "boolean"){
+                        console.log("boolean");
+                    } else{
+                        console.log("multiple");
+                    }
+                    $("#quest_cont").append("<p>" + obj.results[i].question).addClass("text-center d-block p-2 bg-primary text-white");
+                }
+            });    
+        })();
+        
+        
+        
+        //Set function to start playing
         var startPlaying = $(".btn").on("click", function(event){
             //set the timer on
-            delayButtonAlert = setTimeout(function() {
-              console.log("ok");
-            //Call a function that clears the stage and show results
-                var itsDone = function(){
-                    //remove the div with questions
-                    //shows the variables that store results
-                }
+            createRow();
+            delayButtonAlert = setTimeout(function(){
+                console.log("removed");
+                $("#quest_cont p").detach();
+                //Call a function that clears the stage and show results
+              
             }, 3000);
          });
         
-        //Accessing the API from opentdb.com
-        
-        $.ajax({
-          url: data,
-          method: 'GET'
-        }).then(function(obj) {
-            var correct_answer = obj.correct_answer;
-          //load the questions from the API inside a div by iteration
-            for (i = 0; i < obj.length; i++){
-                //Create an element to display the questions
-                //Create the element to display the choices
-            }
-            console.log(obj);
-            
-        });
         
         //Adding checker function
         if ( correct_answer === userChoice){
