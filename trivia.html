@@ -12,16 +12,15 @@
   </head>
   <body>
     <div class="container d-flex p-2 justify-content-center" >
-        <div class="jumbotron ">
+        <div class="jumbotron">
           <h1 class="display-4 text-center">Trivia!</h1>
           <p class="lead text-center p-2">Try to answer these questions before the times end.</p>
           <p class="text-center">The questions will be about different themes so be prepared to use your knowledge and general culture.</p>
-            <div id="quest_cont" class="d-flex flex-column p-2 ">
+          <div id="quest_cont" class="d-flex flex-column p-2 ">
                 <!--  Insert Data here  -->
-                
-            </div>    
-          <p class="lead d-flex justify-content-center p-2 ">
-            <a class="btn btn-primary btn-lg" href="#" role="button">Let's Play</a>
+          </div>    
+          <p id="index" class="lead d-flex justify-content-center p-2 ">
+            <a class="btn btn-primary btn-lg" href="#" role="button" name="lets-play">Let's Play</a>
           </p>
         </div> 
     </div   >
@@ -46,7 +45,6 @@
              url: data,
              method: 'GET'
            }).then(function(obj){
-//               console.log(obj);
                console.log(obj.results);
                for (i = 0 ; i < 10 ; i++){
                    //Create jQuery Objects
@@ -58,10 +56,8 @@
                    var quest_form = $("<form>").appendTo(question_p);
                    var joined = obj.results[i].incorrect_answers.concat(obj.results[i].correct_answer);
                    var answerToDisplay = shuffle(joined);
-//                   console.log(answerToDisplay.length);
                    $.each(answerToDisplay ,function(){
-                       quest_form.append(' ' + '<input type="radio" value = "this">' + ' ' + '<label>' + this);
-//                       console.log(this + " cada uno");
+                       quest_form.append(' ' + '<input type="radio" name="quest">' + ' ' + '<label>' + this);
                    });
                }
            });
@@ -82,34 +78,50 @@
             array[j] = temp
           }
            return array;
-        }
+       }
        
+       
+       //Set btn attributes
+       var btnToggle = function(a){
+           $(".btn").text(a);
+           $(".btn").attr("name", a);
+       }
+       
+       
+        //Set timer function
+        var delayButtonAlert = function(){
+            setTimeout(function(){
+                $("#quest_cont").empty();
+                btnToggle("Play again");
+            }, 20000);
+        }
         
         
         var startPlaying = $(".btn").on("click", function(){
+            var btn = $(this);
+            if(btn.prop("name") == "lets-play"){
+                //Load questions and btns from API function
+                loadTrivia();
+                //Change btn to the other behavior 
+                btnToggle("I am done");
+                //set the timer on
+                delayButtonAlert();
+            } else if(btn.prop("name") == "Play again"){   
+                clearInterval(delayButtonAlert);
+               $("#quest_cont").empty();
+                $("#quest_cont").append("<div>").attr("id","quest_cont").addClass("text-center d-block p-2 bg-primary text-white");
+                loadTrivia();
+                btnToggle("I am done");
+                delayButtonAlert();
+                
+            } else {
+               $("#quest_cont").empty();
+               clearInterval(delayButtonAlert);
+               btnToggle("Play again");
+            }
             //set the timer on
-            loadTrivia();
-            delayButtonAlert = setTimeout(function(){
-                $("#quest_cont p").detach();
-            }, 100000);
          });
         
-        
-        //Adding checker function
-        
-        $( "input" ).on( "click", function() {
-          $( "#log" ).html( $( "input:checked" ).val() + " is checked!" );
-        });
-//        var checkAnwers = function(){
-//            if ( correct_answer === userChoice){
-//                questionsRight++;
-//            } else {
-//                questionsWrong++;
-//            }
-//        };
-        
-        
-        //Adding Done button logic and set timer off
         
         
     });    
