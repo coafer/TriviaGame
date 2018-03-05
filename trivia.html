@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<!--    <link rel="stylesheet" type="text/css" href="style.css">  -->
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <div class="container d-flex p-2 justify-content-center" >
+        <div class="jumbotron ">
+          <h1 class="display-4 text-center">Trivia!</h1>
+          <p class="lead text-center p-2">Try to answer these questions before the times end.</p>
+          <p class="text-center">The questions will be about different themes so be prepared to use your knowledge and general culture.</p>
+            <div id="quest_cont" class="d-flex flex-column p-2 ">
+                <!--  Insert Data here  -->
+                
+            </div>    
+          <p class="lead d-flex justify-content-center p-2 ">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Let's Play</a>
+          </p>
+        </div> 
+    </div   >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    <script type="text/javascript">
+    
+    $(document).ready(function(){    
+        
+        
+        //Set global variables for correct, unanswered and incorrect answers 
+        var questionsRight = 0;
+        var questionsWrong = 0;
+        var questionsNotAnswered = 0;
+        var userChoice;
+        var correct_answer;
+
+        //Ajax call to get the questions from API
+        function loadTrivia(arg){
+           var data = "https://opentdb.com/api.php?amount=10&type=multiple";
+           $.ajax({
+             url: data,
+             method: 'GET'
+           }).then(function(obj){
+//               console.log(obj);
+               console.log(obj.results);
+               for (i = 0 ; i < 10 ; i++){
+                   //Create jQuery Objects
+                   var quest_cont = $("#quest_cont");
+                   var quest_label = $("<label>");
+                   //Attach questions on HTML element container
+                   var question_p = quest_cont.append("<p>" + obj.results[i].question).addClass("text-center d-block p-2 bg-primary text-white");
+                   //add radio btns
+                   var quest_form = $("<form>").appendTo(question_p);
+                   var joined = obj.results[i].incorrect_answers.concat(obj.results[i].correct_answer);
+                   var answerToDisplay = shuffle(joined);
+//                   console.log(answerToDisplay.length);
+                   $.each(answerToDisplay ,function(){
+                       quest_form.append(' ' + '<input type="radio" value = "this">' + ' ' + '<label>' + this);
+//                       console.log(this + " cada uno");
+                   });
+               }
+           });
+       }
+        
+        
+        
+       //https://bost.ocks.org/mike/shuffle/
+       //Fisher–Yates shuffle, use it for shuffling
+       var shuffle = function(array) {
+          var i = 0
+            , j = 0
+            , temp = null
+          for (i = array.length - 1; i > 0; i -= 1) {
+            j = Math.floor(Math.random() * (i + 1))
+            temp = array[i]
+            array[i] = array[j]
+            array[j] = temp
+          }
+           return array;
+        }
+       
+        
+        
+        var startPlaying = $(".btn").on("click", function(){
+            //set the timer on
+            loadTrivia();
+            delayButtonAlert = setTimeout(function(){
+                $("#quest_cont p").detach();
+            }, 100000);
+         });
+        
+        
+        //Adding checker function
+        
+        $( "input" ).on( "click", function() {
+          $( "#log" ).html( $( "input:checked" ).val() + " is checked!" );
+        });
+//        var checkAnwers = function(){
+//            if ( correct_answer === userChoice){
+//                questionsRight++;
+//            } else {
+//                questionsWrong++;
+//            }
+//        };
+        
+        
+        //Adding Done button logic and set timer off
+        
+        
+    });    
+    </script>
+
+    <!-- Optional JavaScript -->
+      
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<!--    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
