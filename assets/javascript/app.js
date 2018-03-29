@@ -17,7 +17,7 @@ var lineCreator = function(obj){
            var quest_cont = $("#quest_cont");
            var quest_label = $("<label>");
            //Attach questions on HTML element container
-           var q_id = $("<p>").attr("data-id", i).text(obj.results[i].question);
+           var q_id = $("<p>").attr("data-id", i).html(obj.results[i].question);
            var question_p = quest_cont.append(q_id).addClass("text-center d-block p-2 bg-primary text-white");
            //add radio btns
            var quest_form = $("<form>").appendTo(question_p);
