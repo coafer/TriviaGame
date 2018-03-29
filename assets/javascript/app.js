@@ -34,7 +34,7 @@ var lineCreator = function(obj){
                    console.log(obj_id + " este es el data-id");
                    if(evt.target.id === answerData.correct_answer) {
                        questionsRight++;
-                       console.log(questionsRight + "ok");
+                       console.log(questionsRight + " ok");
                    } else if(evt){
                        console.log("more than one");
                    } else{
@@ -130,7 +130,7 @@ var stop = function() {
     clockRunning = false;
  }
 
- var start = function() {
+var start = function() {
 
     // DONE: Use setInterval to start the count here and set the clock to running.
     if (!clockRunning) {
@@ -139,7 +139,7 @@ var stop = function() {
     }
   }
 
-  var reset = function() {
+var reset = function() {
 
     time = 180;
 
@@ -185,4 +185,4 @@ var startPlaying = $(".btn").on("click", function(){
        results();
     }
  });
-});    
+});
