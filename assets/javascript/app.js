@@ -11,46 +11,54 @@ var clockRunning = false;
 var time = 180;
 
 var lineCreator = function(obj){
-       console.log(obj);
-       for (i = 0 ; i < 10 ; i++){
-           //Create jQuery Objects
-           var quest_cont = $("#quest_cont");
-           var quest_label = $("<label>");
-           //Attach questions on HTML element container
-           var q_id = $("<p>").attr("data-id", i).html(obj.results[i].question);
-           var question_p = quest_cont.append(q_id).addClass("text-center d-block p-2 bg-primary text-white");
-           //add radio btns
-           var quest_form = $("<form>").appendTo(question_p);
-           var joined = obj.results[i].incorrect_answers.concat(obj.results[i].correct_answer);
-           var answerToDisplay = shuffle(joined);
-           $.each(answerToDisplay ,function(index, el){
-               var answer = $('<input type="radio" name="quest" id="' + el + '"><label for =' + el + '>' + el + '</label>').attr("data-id", i);
-               var answerData = obj.results[i];
-               answer.click(function(evt) {
-//                   console.log(evt.currentTarget + "esto es evt")
-                   
-                   var obj_id = evt.target.getAttribute("data-id");
-                   console.log(evt.target.id + " id");
-                   console.log(obj_id + " este es el data-id");
-                   if(evt.target.id === answerData.correct_answer) {
-                       questionsRight++;
-                       console.log(questionsRight + " ok");
-                   } else if(evt){
-                       console.log("more than one");
-                   } else{
-                       questionsWrong++;
-                       console.log(questionsWrong + " numero de preguntas mal");      
-                   }
-               })
-               quest_form.append(answer);
-           });
-       }
-       $('input').data("click", function(event){
-            alert(event.target.id);
-        })
+   console.log(obj);
 
+    //Create jQuery Objects
+   var quest_cont = $("#quest_cont");
+   var quest_label = $("<label>");
+
+    //Create jQuery through loop
+   for (var i = 0 ; i < 10 ; i++){
+
+       //Attach questions on HTML element container
+       var q_id = $("<p>").attr("data-id", i).html(obj.results[i].question);
+       var question_p = quest_cont.append(q_id).addClass("text-center d-block p-2 bg-primary text-white");
+
+       //add form
+       var quest_form = $("<form>").appendTo(question_p);
+       //Joining answers wrong and right
+       var joined = obj.results[i].incorrect_answers.concat(obj.results[i].correct_answer);
+       //Shuffling answers for not placing them on the same spot
+       var answerToDisplay = shuffle(joined);
+       $.each(answerToDisplay ,function(index, el){
+           var answerData = obj.results[i];
+           //Add input radio button
+           var answer = $('<input type="radio" name="quest" id="' + el + '"><label for =' + el + '>' + el + '</label>').attr("data-id", i);
+
+//           answer.click(function(evt) {
+//               var obj_id = evt.target.getAttribute("data-id");
+//               console.log(evt.target.id + " id");
+//               console.log(obj_id + " este es el data-id");
+//               if(evt.target.id === answerData.correct_answer) {
+//                   questionsRight++;
+//                   console.log(questionsRight + " ok");
+//               } else if(evt){
+//                   console.log("more than one");
+//               } else{
+//                   questionsWrong++;
+//                   console.log(questionsWrong + " numero de preguntas mal");
+//               }
+//           })
+           quest_form.append(answer);
+       });
    }
     
+   $('input').data("click", function(event){
+        alert(event.target.id);
+    })
+
+}
+
     
     //Ajax call to get the questions from API
 function loadTrivia(){
@@ -61,8 +69,8 @@ function loadTrivia(){
    }).then(lineCreator);
 }
 
-   //https://bost.ocks.org/mike/shuffle/
-   //Fisher–Yates shuffle, use it for shuffling
+//https://bost.ocks.org/mike/shuffle/
+//Fisher–Yates shuffle, use it for shuffling
 var shuffle = function(array) {
   var i = 0
     , j = 0
@@ -160,7 +168,7 @@ var results = function(){
     questionsWrong = 0;
 };
     
-    
+//Button text changer
 var startPlaying = $(".btn").on("click", function(){
     var btn = $(this);
     if(btn.prop("name") == "lets-play"){
