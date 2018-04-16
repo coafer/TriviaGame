@@ -32,8 +32,16 @@ var lineCreator = function(obj){
        var answerToDisplay = shuffle(joined);
        $.each(answerToDisplay ,function(index, el){
            var answerData = obj.results[i];
+           //Set radio btn correct attribute
+           function stampId(val) {
+               if(answerData.correct_answer === val){
+                   return "ok";
+               } else {
+                   return "";
+               }
+            }
            //Add input radio button
-           var answer = $('<input type="radio" name="quest" id="' + el + '"><label for =' + el + '>' + el + '</label>').attr("data-id", i);
+           var answer = $('<input type="radio" name="quest" id="' + el + ' data-reference="' + stampId(el) + '" "><label for =' + el + '>' + el + '</label>').attr("data-id", i);
 
 //           answer.click(function(evt) {
 //               var obj_id = evt.target.getAttribute("data-id");
@@ -84,6 +92,8 @@ var shuffle = function(array) {
    return array;
 }
 
+
+//Set radio btn correct attribute
 
    //Set btn attributes
 var btnToggle = function(a){
