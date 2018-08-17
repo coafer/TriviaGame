@@ -2,15 +2,12 @@ $(document).ready(function() {
   //Set global variables for correct, unanswered and incorrect answers
   var questionsRight = 0;
   var questionsWrong = 0;
-  var questionsNotAnswered = 0;
-  var userChoice;
-  var correct_answer;
+  var questionAnswered = 0;
   var intervalId;
   var clockRunning = false;
   var time = 180;
 
-  var listenR = [];
-
+  //This function will create the questions and anwsers in the document
   var lineCreator = function(obj) {
     console.log(obj);
 
@@ -29,7 +26,7 @@ $(document).ready(function() {
         .addClass("text-center d-block p-2 bg-primary text-white");
 
       //add form
-      var quest_form = $("<form>").appendTo(question_p);
+      var quest_form = $("<div>").appendTo(question_p);
       //Joining answers wrong and right
       var joined = obj.results[i].incorrect_answers.concat(
         obj.results[i].correct_answer
@@ -48,13 +45,17 @@ $(document).ready(function() {
         }
         //Add input radio button
         var answer = $(
-          '<input type="radio" name="quest" id="' +
+          '<input type="radio" name="quest_' +
+            i +
+            '" id="' +
             el +
             '" data-reference="' +
             stampId(el) +
             '" value="' +
             el +
-            '"><label for =' +
+            '"><label name="quest_' +
+            i +
+            '" for =' +
             el +
             ">" +
             el +
@@ -77,7 +78,7 @@ $(document).ready(function() {
   //https://bost.ocks.org/mike/shuffle/
   //Fisher–Yates shuffle, use it for shuffling
   var shuffle = function(array) {
-    var i = 0,
+    let i = 0,
       j = 0,
       temp = null;
     for (i = array.length - 1; i > 0; i -= 1) {
@@ -88,6 +89,36 @@ $(document).ready(function() {
     }
     return array;
   };
+
+  //Number of checked radio buttons
+  var checkingAll = $(document).on("click", "input", function() {
+    var options = $("input:checked").length;
+    questionAnswered = options;
+  });
+
+  var valuesFromRadio = [];
+  //Know the values of radio btns
+  function checkingValuesOfRadioBtns() {
+    for (var i = 0; i < 10; i++) {
+      var radioValues = $("input[name=quest_" + i + "]:checked").data(
+        "reference"
+      );
+      valuesFromRadio.push(radioValues);
+    }
+    console.log("the values are:" + valuesFromRadio);
+  }
+
+  //Fill the right or wrong variables for answers
+  function checkTheArrayOfValues() {
+    valuesFromRadio.forEach(function(value) {
+      if (value === 1) {
+        questionsRight++;
+      } else if (value === 0) {
+        questionsWrong++;
+      }
+    });
+    valuesFromRadio = [];
+  }
 
   //Set btn attributes
   var btnToggle = function(a) {
@@ -119,6 +150,8 @@ $(document).ready(function() {
     time--;
 
     if (time === 0) {
+      checkingValuesOfRadioBtns();
+      checkTheArrayOfValues();
       stop();
       reset();
       $("#quest_cont").empty();
@@ -177,32 +210,21 @@ $(document).ready(function() {
       reset();
       start();
     } else {
+      checkingValuesOfRadioBtns();
+      checkTheArrayOfValues();
       $("#quest_cont").empty();
+      //testing sweet alert
+      swal("Good job!", "You clicked the button!", "success");
       stop();
       btnToggle("Play again");
       //show results
-      console.log(listenR);
       results();
     }
   });
 
-  $(document).on("change", "input", function() {
-    var countChecked = $("input:checked").data("reference");
-    console.log(countChecked + "chequeado");
-    // var customAttributeData = $(this).data("reference");
-    // console.log(customAttributeData + " is checked!");
-    // if (customAttributeData == 1) {
-    //   questionsRight++;
-    //   console.log(questionsRight);
-    // } else {
-    //   questionsWrong++;
-    //   console.log(questionsWrong);
-    // }
-  });
-
   //Calculate results
   var results = function() {
-    var notAnswered = 10 - (questionsWrong + questionsRight);
+    var notAnswered = 10 - questionAnswered;
     var c = $("<div>");
     var p_2 = c
       .append(
@@ -210,7 +232,7 @@ $(document).ready(function() {
           " " +
           questionsRight +
           " " +
-          " answers.</p>"
+          " questions.</p>"
       )
       .append(
         "<p>You have not responded correctly:" +
